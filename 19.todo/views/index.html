@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html ng-app="todoModule">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <title>待办事项</title>
+    <link rel="stylesheet" href="/lib/bootstrap.css"/>
+
+    <link rel='stylesheet' href='/font/css/font-awesome.css' />
+
+    <script src="/lib/angular.js"></script>
+  </head>
+  <body ng-controller="todoController">
+    <div class="container">
+      <div class="jumbotron text-center">
+        <h1>todo <span class="label label-info">{{todos.length}}</span></h1>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-4 col-sm-offset-4">
+          <div class="checkbox" ng-repeat="todo in todos">
+            <label for=""><input name="todoname" value="{{todo._id}}" type="checkbox" />{{todo.text}}</label>
+          </div>
+          <p class="text-center" ng-show="loading">
+            <span class="fa fa-spinner fa-spin fa-3x"></span>
+          </p>
+        </div>
+      </div>
+
+      <div id="todo-form" class="row">
+        <div class="col-sm-8 col-sm-offset-2 text-center">
+          <form action="">
+            <div class="form-group">
+              <input class="form-control input-sm text-center" placeholder="请输入" ng-model="formData.text"/>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" ng-click="createTodo()">增加</button>
+            <button type="button" class="btn btn-primary btn-sm" ng-click="batchDelete()">批量删除</button>
+          </form>
+        </div>
+      </div>
+
+      <div class="text-center text-muted">
+        <p>珠峰</p>
+      </div>
+    </div>
+  </body>
+<script>
+  var app = angular.module('todoModule',[]);
+  app.factory('todoService',function($http){
+    return {
+      get:function(){
+        //$http = $ajax
+        return $http.get('/api/todos');
+      },
+      create:function(todoData){
+        console.log('create');
+        return $http.post('/api/todos',todoData);
+      },
+      delete:function(id){
+        return $http.delete('/api/todos/'+id);
+      },
+      batchDelete:function(ids){
+        return $http.post('/api/todos/batchDelete',{ids:ids});
+      }
+    }
+  });
+  app.controller('todoController',function($scope,$http,todoService){
+    $scope.formData = {};
+    $scope.loading = true;
+    todoService.get().success(function(data){
+      $scope.todos = data;
+      $scope.loading = false;
+    });
+
+    $scope.createTodo =  function(){
+      if($scope.formData.text !=undefined){
+        $scope.loading = true;
+        todoService.create($scope.formData).success(function(data){
+          $scope.formData = {};
+          $scope.todos = data;
+          $scope.loading = false;
+        });
+      }
+    }
+    $scope.deleteTodo = function(id){
+      $scope.loading = true;
+      todoService.delete(id).success(function(data){
+        $scope.todos = data;
+        $scope.loading = false;
+      });
+    }
+
+    $scope.batchDelete= function(){
+      $scope.loading = true;
+      var ids = [];
+      var cks = document.getElementsByTagName('input');
+      for(var i=0;i<cks.length;i++){
+        if(cks[i].checked)
+          ids.push(cks[i].value);
+      }
+      todoService.batchDelete(ids).success(function(data){
+        $scope.todos = data;
+        $scope.loading = false;
+      });
+    }
+  })
+</script>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html ng-app="todoModule">
+<head>
+    <title><%= title %></title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+    <link rel="stylesheet" href="../public/stylesheets/bootstrap.css"/>
+    <link rel="stylesheet" href="../public/stylesheets/bootstrap-theme.css"/>
+    <link rel="stylesheet" href="/stylesheets/font-awesome.css"/>
+    <script src="/javascripts/angular.js"></script>
+    <style>
+        body{
+            margin-top:50px;
+        }
+    </style>
+</head>
+<body ng-controller="todoController">
+    <div class="container">
+        <div class="jumbotron text-center">
+            <h1>待办事项 <span class="label label-info">{{todos.length}}</span></h1>
+        </div>
+
+        <div class="row text-center">
+            <div class="col-sm-4 col-sm-offset-4 text-center">
+                <div class="checkbox" ng-repeat="todo in todos">
+                    <label for=""><input type="checkbox" name="todoname" value="{{todo._id}}"/>{{todo.text}}</label>
+                </div>
+                <p class="text-center" ng-show="loading">
+                    <span class="fa fa-spinner fa-spin fa-3x"></span>
+                </p>
+            </div>
+        </div>
+
+        <div id="todo-form" class="row">
+            <div class="col-sm-8 col-sm-offset-2 text-center">
+                <form action="">
+                    <div class="form-group">
+                        <input type="text" class="form-control input-sm text-center" ng-model="formData.text" />
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm" ng-click="createTodo()">增加</button>
+                    <button type="button" class="btn btn-danger btn-sm " ng-click="delete()">删除</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="/javascripts/todo.js"></script>
+<script src="/javascripts/services/todoService.js"></script>
+<script src="/javascripts/controllers/todoController.js"></script>
+</html>

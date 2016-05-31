@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="jquery.js"></script>
+</head>
+<body>
+请输入用户信息
+用户名:<input type="text" id="username">
+密码:<input type="password" id="password">
+邮箱:<input type="email" id="email">
+<button type="button" id="btnAdd">添加</button>
+<button type="button" id="btnDelete">删除</button>
+<ul id="studentList">
+
+</ul>
+</body>
+<script>
+    function loadData(data){
+        $('#studentList').empty();
+        $.each(data,function(index,user){
+            var content = '<li>'+'<input type="checkbox" name="userIds" value="'+user.id+'">'+(user.id+'-'+user.username+'-'+user.email)+'</li>';
+            $('#studentList').append(content);
+        });
+    }
+ $(function(){
+     $('#btnAdd').click(function(){
+         $.ajax({
+             type:'POST',//请求的方法
+             url:'/add',//请求的路径
+             data:{username:$('#username').val(),password:$('#password').val(),email:$('#email').val()},
+             dataType:'json',
+             success:function(data){
+                 loadData(data);
+             }
+         });
+     });
+
+     $('#btnDelete').click(function(){
+         var idArray = [];
+         $('[name=userIds]:checked').each(function(){
+             idArray.push($(this).val());
+         });
+         if(idArray.length>0){
+             $.ajax({
+                 type:'POST',
+                 url:'/delete',
+                 data:{userIds:idArray.join(',')},
+                 dataType:'json',
+                 success:function(data){
+                     loadData(data);
+                 }
+             })
+         }
+     });
+ });
+</script>
+</html>

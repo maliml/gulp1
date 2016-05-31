@@ -1,0 +1,21 @@
+{
+  "name": "first",
+  "version": "1.0.0",
+  "description": "this is my first grunt",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git"
+  },
+  "keywords": [
+    "key"
+  ],
+  "author": "zry",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5"
+  }
+}

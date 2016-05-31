@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html ng-app="appModule">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <script src="bower_components/angular/angular.js"></script>
+</head>
+<body>
+ <div class="container" ng-controller="userController">
+     <div class="panel panel-default">
+         <div class="panel-heading">
+             <a ng-click="add()" class="btn btn-xs btn-primary">增加用户</a>
+         </div>
+         <div class="panel-body">
+             <ul class="list-group">
+                <li class="list-group-item" ng-repeat="user in users ">
+                    {{user.username}}|{{user.password}}
+                    <div class="pull-right">
+                        <a ng-click="modify(user)" class="btn btn-xs btn-info">编辑</a>
+                        <a ng-click="delete(user._id)" class="btn btn-xs btn-danger">删除</a>
+                    </div>
+                </li>
+             </ul>
+         </div>
+         <div class="panel-footer">
+           <div class="row">
+               <div ng-show="showForm" class="col-sm-6 col-sm-offset-3">
+                   <form action="" class="form-horizontal" role="form">
+                       <input type="hidden" name="_id" ng-model="user._id">
+                       <div class="form-group">
+                           <label for="username">用户名</label>
+                           <input type="text" class="form-control" ng-model="user.username"/>
+                       </div>
+                       <div class="form-group">
+                           <label for="password">密码</label>
+                           <input type="text" class="form-control" ng-model="user.password"/>
+                       </div>
+                       <div class="form-group">
+                           <input type="button" class="form-control" ng-click="exec(action)" value="提交"/>
+                       </div>
+                   </form>
+               </div>
+           </div>
+         </div>
+     </div>
+ </div>
+ <script>
+     var app = angular.module('appModule',[]);
+     app.controller('userController',function($scope,$http){
+         $scope.showForm = false;
+
+         $http({
+             method:'GET',
+             url:'/users'
+         }).then(function(res){
+             $scope.users = res.data;
+         });
+         $scope.exec = function(action){
+             switch(action){
+                 case 'add':
+                     $http({
+                         method:'POST',
+                         url:'/user',
+                         data:$scope.user,
+                         dataType:'json'
+                     }).then(function(res){
+                         $scope.users = res.data;
+                         $scope.showForm = false;
+                     });
+                     break;
+                 case 'modify':
+                     $http({
+                         method:'PUT',
+                         url:'/user',
+                         data:$scope.user,
+                         dataType:'json'
+                     }).then(function(res){
+                         $scope.users = res.data;
+                         $scope.showForm = false;
+                     });
+                     break;
+             }
+
+        }
+
+         $scope.delete = function(_id){
+             $http({
+                 method:'DELETE',
+                 url:'/user?_id='+_id
+             }).then(function(res){
+                 $scope.users = res.data;
+             });
+         }
+
+         $scope.add = function(){
+             $scope.showForm = true;
+             $scope.action = 'add';
+             $scope.user={};
+         }
+
+         $scope.modify = function(thisUser){
+             $scope.showForm = true;
+             $scope.user = thisUser;
+             $scope.action = 'modify';
+         }
+     });
+ </script>
+</body>
+
+</html>

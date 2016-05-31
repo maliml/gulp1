@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+
+</body>
+<script>
+    function City(name){
+        this.name = name;
+        this.func = null;
+    }
+    var a = new City('北京');
+    var b = new City('上海');
+    b.func = bind(function(){
+        console.log(this.name);
+    },a);
+    b.func();
+    b = null;
+    a= null;
+    function bind(func,self){
+        return function(){
+            return func.apply(self);
+        }
+    }
+</script>
+</html>
